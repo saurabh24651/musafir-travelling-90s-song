@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Compass, Radio } from 'lucide-react';
+import { Play, Pause, Radio } from 'lucide-react';
 
 export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -27,53 +27,60 @@ export default function App() {
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: '#000', color: '#fff', fontFamily: 'system-ui, sans-serif' }}>
-      {/* Background Image */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('/bg.png')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} />
-      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.1)' }} />
+    <div className="relative w-full min-h-screen overflow-x-hidden overflow-y-auto bg-black text-white flex flex-col justify-between font-sans selection:bg-amber-500 selection:text-black">
+      {/* Background Image & Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-90"
+        style={{ backgroundImage: `url('/bg.png')` }}
+      />
+      <div className="absolute inset-0 bg-black/40 z-0" />
 
       {/* Top Navigation Bar */}
-      <div style={{ position: 'absolute', top: '24px', left: '32px', right: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 20 }}>
-        <div style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '9999px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#34d399', boxShadow: '0 0 8px #34d399' }}></span> 
-          <span style={{ fontWeight: '500' }}>{onlineCount} on the highway</span>
+      <header className="relative z-20 w-full px-4 sm:px-8 pt-6 flex justify-between items-center gap-2">
+        <div className="bg-black/40 backdrop-blur-md px-3 sm:px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm flex items-center gap-2 shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span> 
+          <span className="font-medium whitespace-nowrap">{onlineCount} on the highway</span>
         </div>
 
-        <div style={{ width: '120px' }}></div>
-
-        <div style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '9999px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '13px', fontWeight: '500' }}>
+        <div className="bg-black/40 backdrop-blur-md px-3 sm:px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm font-medium shadow-lg">
           {currentTime}
         </div>
-      </div>
+      </header>
 
-      {/* Quote */}
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, pointerEvents: 'none' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: '500', color: '#fef08a', background: 'rgba(0,0,0,0.5)', padding: '10px 28px', borderRadius: '9999px', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', letterSpacing: '0.5px', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+      {/* Central Title and Quote Section */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 my-8 text-center">
+        <h1 className="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tight text-neutral-900/90 drop-shadow-2xl select-none mb-6">
+          मुसाफिर
+        </h1>
+        <div className="bg-black/50 backdrop-blur-md px-6 py-3 rounded-full border border-white/20 text-amber-200 text-sm sm:text-lg font-medium shadow-xl tracking-wide max-w-md">
           सफर लम्बा है, जल्दी क्या है?
-        </h2>
-      </div>
-
-      {/* Bottom Player */}
-      <div style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', width: '92%', maxWidth: '750px', background: 'rgba(20,20,20,0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 20, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-        <audio ref={audioRef} src={streamUrl} preload="auto" />
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.25)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Radio color="#fde047" size={22} className="animate-pulse" />
-          </div>
-          <div>
-            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#fff' }}>Song.mp3</h4>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#34d399' }}>● Streaming from AWS S3</p>
-          </div>
         </div>
+      </main>
 
-        <button 
-          onClick={togglePlay} 
-          style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', transition: 'transform 0.2s' }}
-        >
-          {isPlaying ? <Pause size={20} color="#000" fill="#000" /> : <Play size={20} color="#000" fill="#000" style={{ marginLeft: '2px' }} />}
-        </button>
-      </div>
+      {/* Bottom Audio Player Bar */}
+      <footer className="relative z-20 w-full px-4 pb-6 flex justify-center">
+        <div className="w-full max-w-xl bg-neutral-900/80 backdrop-blur-xl border border-white/15 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xl">
+          <audio ref={audioRef} src={streamUrl} preload="auto" />
+          
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-white/10 flex items-center justify-center shrink-0">
+              <Radio className="text-amber-300 animate-pulse" size={22} />
+            </div>
+            <div className="min-w-0">
+              <h4 className="m-0 text-sm font-semibold text-white truncate">Song.mp3</h4>
+              <p className="m-0 text-xs text-emerald-400 truncate">● Streaming from AWS S3</p>
+            </div>
+          </div>
+
+          <button 
+            onClick={togglePlay} 
+            className="w-12 h-12 rounded-full bg-white text-black border-none flex items-center justify-center cursor-pointer shadow-lg hover:scale-105 active:scale-95 transition-transform shrink-0"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? <Pause size={20} fill="#000" /> : <Play size={20} fill="#000" style={{ marginLeft: '2px' }} />}
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
